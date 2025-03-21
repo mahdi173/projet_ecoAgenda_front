@@ -1,23 +1,48 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, onMounted } from 'vue'; // Import  API functions
+import EventList from './components/Events/EventsList.vue';
+import EventForm from './components/Events/EventForm.vue';
+
+// Reactive data
+const events = ref([]); // Use `ref` to create a reactive array
+
+// Fetch events function
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/events/pagination/1', {
+        headers: {
+          'Content-Type': 'application/json', // Correct content type
+        },
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+
+      const data = await response.json();
+      console.log(data);
+      events.value = data; // Update the reactive data
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+  };
+
+  const addEvent = (newEvent) => {
+    events.value.push(newEvent);
+  };
+
+  // Fetch events when the component is mounted
+  onMounted(() => {
+    fetchEvents();
+  });
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div id="app">
+    <EventForm @add-event="addEvent" />
+    <EventList :events="events" />
+  </div>
 </template>
 
 <style scoped>
