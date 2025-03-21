@@ -1,48 +1,43 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'; // Import  API functions
-import EventList from './components/Events/EventsList.vue';
-import EventForm from './components/Events/EventForm.vue';
+import { ref, onMounted, provide } from 'vue'; // Import  API functions
 
-// Reactive data
-const events = ref([]); // Use `ref` to create a reactive array
+interface Event {
+  id: number,
+  title: string;
+  lieu: string;
+  date: string;
+}
+const events = ref<Event[]>([]);
 
-// Fetch events function
   const fetchEvents = async () => {
     try {
       const response = await fetch('http://localhost:3000/events/pagination/1', {
         headers: {
-          'Content-Type': 'application/json', // Correct content type
+          'Content-Type': 'application/json',
         },
         method: 'GET',
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch events');
-      }
-
       const data = await response.json();
-      console.log(data);
-      events.value = data; // Update the reactive data
+      events.value = data;
     } catch (error) {
       console.error('Error fetching events:', error);
     }
   };
 
-  const addEvent = (newEvent) => {
+  provide("events", events);
+
+  const addEvent = (newEvent: Event) => {
     events.value.push(newEvent);
   };
 
-  // Fetch events when the component is mounted
   onMounted(() => {
     fetchEvents();
   });
 </script>
 
 <template>
-  <div id="app">
-    <EventForm @add-event="addEvent" />
-    <EventList :events="events" />
-  </div>
+  <router-view @add-event="addEvent"></router-view>
 </template>
 
 <style scoped>
