@@ -9,17 +9,23 @@ interface Event {
 }
 const events = ref<Event[]>([]);
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (page = 1) => {
     try {
-      const response = await fetch('http://localhost:3000/events/pagination/1', {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const cachedData = sessionStorage.getItem('events');
+      if (cachedData) {
+        events.value = JSON.parse(cachedData);
+        return;
+      }
+
+      const response = await fetch('http://localhost:3000/events/pagination/' + page, {
+        headers: { 'Content-Type': 'application/json' },
         method: 'GET',
       });
 
       const data = await response.json();
       events.value = data;
+
+      sessionStorage.setItem('events', JSON.stringify(data));
     } catch (error) {
       console.error('Error fetching events:', error);
     }
@@ -28,7 +34,8 @@ const events = ref<Event[]>([]);
   provide("events", events);
 
   const addEvent = (newEvent: Event) => {
-    events.value.push(newEvent);
+    events.value.unshift(newEvent);
+    sessionStorage.setItem('events', JSON.stringify(events.value)); 
   };
 
   onMounted(() => {

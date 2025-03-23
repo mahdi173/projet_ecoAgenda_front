@@ -6,7 +6,7 @@
     <div v-if="events && events.length > 0" class="events">
       <div v-for="event in events" :key="event.id" class="event">
         <h2 class="title">{{ event.title }}</h2>
-        <p class="address">{{ event.date }}</p>
+        <p class="address">{{ formatDate(event.date) }}</p>
         <p class="address">{{ event.lieu }}</p>
       </div>
     </div>
@@ -19,12 +19,17 @@
 <script setup lang="ts">
   import { inject } from "vue";
   import { useRouter } from "vue-router";
+  import moment from 'moment';
 
   const events = inject<Array<{ id: number, title: string; lieu: string; date: string }>>("events");
   const router = useRouter();
 
   const goToForm = () => {
     router.push("/add");
+  };
+
+  const formatDate = (date: string) =>  {
+    return moment(date).format('DD/MM/YYYY, h:mm');
   };
 </script>
   
