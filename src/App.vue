@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, provide, computed } from 'vue';
+import moment from 'moment';
+import EventFrom from './components/Events/EventForm.vue';
 
 interface Event {
   id: number;
@@ -54,8 +56,8 @@ const addEvent = (newEvent: Event) => {
   sessionStorage.setItem('events', JSON.stringify(events.value));
 };
 
-const handleContactForm = () => {
-  alert('Merci pour votre message ! Nous vous répondrons bientôt.');
+const formatDate = (date: string) => {
+  return moment(date).format('DD/MM/YYYY [at] HH[h]');
 };
 
 onMounted(() => {
@@ -80,7 +82,6 @@ const toggleMenu = () => {
         <nav :class="{ open: isMenuOpen }">
           <a href="/">Accueil</a>
           <a href="#about">À propos</a>
-          <a href="#contact">Contact</a>
         </nav>
       </div>
     </header>
@@ -90,30 +91,31 @@ const toggleMenu = () => {
         <p>Planifiez vos événements pour un avenir durable.</p>
       </section>
       <section id="events" class="events-section">
-        <h2>Événements</h2>
-        <div class="events-container">
-          <div v-if="paginatedEvents.length > 0" class="events">
-            <div v-for="event in paginatedEvents" :key="event.id" class="event">
-              <h3 class="title">{{ event.title }}</h3>
-              <p class="address">{{ event.lieu }}</p>
-              <p class="date">{{ new Date(event.date).toLocaleDateString() }}</p>
-            </div>
-          </div>
-          <div v-else>
-            <p>Aucun événement disponible.</p>
-          </div>
-          <div class="pagination">
-            <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Précédent</button>
-            <span>Page {{ currentPage }} sur {{ totalPages }}</span>
-            <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Suivant</button>
-          </div>
-        </div>
-      </section>
-      <section id="about" class="about">
+        <section id="about" class="about">
         <h2>À propos</h2>
         <p>EcoAgenda est une plateforme dédiée à la planification d'événements écoresponsables.</p>
       </section>
-      <router-view @add-event="addEvent"></router-view>
+      <EventFrom  @add-event="addEvent" />
+      <h2>Événements</h2>
+      <div class="events-container">
+        <div v-if="paginatedEvents.length > 0" class="events">
+          <div v-for="event in paginatedEvents" :key="event.id" class="event">
+            <h3 class="title">{{ event.title }}</h3>
+            <p class="address">{{ event.lieu }}</p>
+            <p class="date">{{formatDate(event.date)}}</p>
+          </div>
+        </div>
+        <div v-else>
+          <p>Aucun événement disponible.</p>
+        </div>
+        <div class="pagination">
+          <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Précédent</button>
+          <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+          <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Suivant</button>
+        </div>
+      </div>
+      </section>
+
     </main>
     <footer>
       <div class="container">
@@ -285,7 +287,7 @@ header nav a:hover {
   transform: scale(1.1);
 }
 
-.about, .contact {
+.about {
   padding: 2rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -303,43 +305,9 @@ header nav a:hover {
   }
 }
 
-.about h2, .contact h2 {
+.about h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
-}
-
-.contact form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.contact input, .contact textarea {
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-.contact input:focus, .contact textarea:focus {
-  border-color: #1abc9c;
-  outline: none;
-}
-
-.contact button {
-  background-color: #1abc9c;
-  color: white;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.contact button:hover {
-  background-color: #16a085;
-  transform: scale(1.05);
 }
 
 footer {

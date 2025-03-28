@@ -15,6 +15,7 @@
       <div class="form-group">
         <label for="date">Date :</label>
         <input type="date" id="date" v-model="date" required />
+        <input type="time" id="time" v-model="time" required />
       </div>
 
       <button type="submit">Ajouter l'événement</button>
@@ -24,13 +25,12 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const title = ref('');
 const lieu = ref('');
 const date = ref('');
+const time = ref('');
 
-const router = useRouter();
 const emit = defineEmits(['add-event']);
 
 const submitForm = async () => {
@@ -41,7 +41,7 @@ const submitForm = async () => {
   const newEvent = {
     title: title.value,
     lieu: lieu.value,
-    date: date.value,
+    date:  `${date.value}T${time.value}`,
   };
 
   try {
@@ -64,8 +64,8 @@ const submitForm = async () => {
     title.value = '';
     lieu.value = '';
     date.value = '';
+    time.value = '';
 
-    router.push('/');
   } catch (error) {
     console.error('Error:', error);
   }
