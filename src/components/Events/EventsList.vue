@@ -1,17 +1,7 @@
 <template>
   <div class="event-list">
     <div>
-      <button @click="goToForm">Ajouter un nouveau evenment</button>
-    </div>
-    <div v-if="events && events.length > 0" class="events">
-      <div v-for="event in events" :key="event.id" class="event">
-        <h2 class="title">{{ event.title }}</h2>
-        <p class="address">{{ formatDate(event.date) }}</p>
-        <p class="address">{{ event.lieu }}</p>
-      </div>
-    </div>
-    <div v-else>
-      <p>No events available.</p>
+      <button @click="goToForm">Créer un événement</button>
     </div>
   </div>
 </template>
