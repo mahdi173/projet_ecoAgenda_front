@@ -1,7 +1,7 @@
 <template>
   <div class="event-list">
     <div>
-      <button @click="goToForm">Ajouter un nouveau evenment</button>
+      <button @click="goToForm">Créer un événement</button>
     </div>
     <div v-if="events && events.length > 0" class="events">
       <div v-for="event in events" :key="event.id" class="event">
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div v-else>
-      <p>No events available.</p>
+      <p>Aucun événement disponible.</p>
     </div>
   </div>
 </template>

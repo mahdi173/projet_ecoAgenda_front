@@ -1,23 +1,23 @@
 <template>
   <div class="event-form">
-    <h2>Ajouter un nouveau événement</h2>
+    <h2>Ajouter un nouvel événement</h2>
     <form @submit.prevent="submitForm">
       <div class="form-group">
-        <label for="title">Title:</label>
-        <input type="text" id="title" v-model="title" required />
+        <label for="title">Titre :</label>
+        <input type="text" id="title" v-model="title" placeholder="Entrez le titre de l'événement" required />
       </div>
 
       <div class="form-group">
-        <label for="lieu">Location:</label>
-        <input type="text" id="lieu" v-model="lieu" required />
+        <label for="lieu">Lieu :</label>
+        <input type="text" id="lieu" v-model="lieu" placeholder="Entrez le lieu de l'événement" required />
       </div>
 
       <div class="form-group">
-        <label for="date">Date:</label>
+        <label for="date">Date :</label>
         <input type="date" id="date" v-model="date" required />
       </div>
 
-      <button type="submit">Add Event</button>
+      <button type="submit">Ajouter l'événement</button>
     </form>
   </div>
 </template>
@@ -67,41 +67,84 @@ const submitForm = async () => {
 
     router.push('/');
   } catch (error) {
+    console.error('Error:', error);
   }
 };
 </script>
 
 <style scoped>
 .event-form {
-  margin-bottom: 30px;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 1.5rem;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 0.5rem;
   font-weight: bold;
+  color: #333;
 }
 
 input {
   width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: #1abc9c;
+  outline: none;
 }
 
 button {
-  padding: 10px 20px;
-  background-color: #42b983;
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #1abc9c;
   color: white;
   border: none;
   border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 button:hover {
-  background-color: #369f6e;
+  background-color: #16a085;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(1);
 }
 </style>
