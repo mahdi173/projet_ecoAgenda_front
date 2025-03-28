@@ -48,3 +48,5 @@ npm run dev
 ```sh
 npm run build
 ```
+# Lighthouse
+![alt text](image.png)
