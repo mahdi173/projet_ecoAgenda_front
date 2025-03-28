@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, provide } from 'vue';
+import { ref, onMounted, provide, computed } from 'vue';
 
 interface Event {
   id: number;
@@ -8,6 +8,8 @@ interface Event {
   date: string;
 }
 const events = ref<Event[]>([]);
+const currentPage = ref(1);
+const itemsPerPage = 5;
 
 const fetchEvents = async (page = 1) => {
   try {
@@ -32,6 +34,20 @@ const fetchEvents = async (page = 1) => {
 };
 
 provide('events', events);
+
+const paginatedEvents = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return events.value.slice(start, end);
+});
+
+const totalPages = computed(() => Math.ceil(events.value.length / itemsPerPage));
+
+const changePage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
 
 const addEvent = (newEvent: Event) => {
   events.value.unshift(newEvent);
@@ -73,20 +89,31 @@ const toggleMenu = () => {
         <h2>Bienvenue sur EcoAgenda</h2>
         <p>Planifiez vos événements pour un avenir durable.</p>
       </section>
+      <section id="events" class="events-section">
+        <h2>Événements</h2>
+        <div class="events-container">
+          <div v-if="paginatedEvents.length > 0" class="events">
+            <div v-for="event in paginatedEvents" :key="event.id" class="event">
+              <h3 class="title">{{ event.title }}</h3>
+              <p class="address">{{ event.lieu }}</p>
+              <p class="date">{{ new Date(event.date).toLocaleDateString() }}</p>
+            </div>
+          </div>
+          <div v-else>
+            <p>Aucun événement disponible.</p>
+          </div>
+          <div class="pagination">
+            <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Précédent</button>
+            <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+            <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Suivant</button>
+          </div>
+        </div>
+      </section>
       <section id="about" class="about">
         <h2>À propos</h2>
         <p>EcoAgenda est une plateforme dédiée à la planification d'événements écoresponsables.</p>
       </section>
       <router-view @add-event="addEvent"></router-view>
-      <section id="contact" class="contact">
-        <h2>Contactez-nous</h2>
-        <form @submit.prevent="handleContactForm">
-          <input type="text" placeholder="Votre nom" required />
-          <input type="email" placeholder="Votre email" required />
-          <textarea placeholder="Votre message" required></textarea>
-          <button type="submit">Envoyer</button>
-        </form>
-      </section>
     </main>
     <footer>
       <div class="container">
@@ -332,5 +359,75 @@ footer .container {
 
 footer p {
   margin: 0.5rem 0;
+}
+
+.events-section {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.events-container {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.events {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.event {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.event .title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.event .address,
+.event .date {
+  font-size: 1rem;
+  color: #555;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  background-color: #1abc9c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #16a085;
+}
+
+.pagination span {
+  font-size: 1rem;
+  color: #333;
 }
 </style>
